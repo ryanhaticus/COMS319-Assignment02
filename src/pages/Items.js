@@ -7,25 +7,46 @@ export const Items = () => {
   const { cart, addToCart, removeFromCart } = useContext(CartContext);
   const { setPage } = useContext(PageContext);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   const filteredItems = items.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleAddToCart = (item) => {
+    addToCart(item);
+    setToastMessage(`Successfully added ${item.name.toLowerCase()} to cart!`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000); 
+  };
+
+  const handleRemoveFromCart = (item) => {
+    removeFromCart(item);
+    setToastMessage(`Successfully removed ${item.name.toLowerCase()} from cart!`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000); 
+  };
+
   return (
     <div>
-      <div className="bg-white">
-        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+      {showToast && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 rounded bg-green-400 text-white z-50">
+            {toastMessage}
+          </div>
+      )}
+      <div className="bg-gradient-to-b from-gray-100 to-gray-300">
+      <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-12 lg:max-w-7xl lg:px-8">
           <div className="flex items-center justify-between">
             <Authors />
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 mr-40">
               Available Items
             </h1>
             <button
               onClick={() => setPage("cart")}
               type="button"
               className="flex gap-x-4 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
+              >
               <svg
                 fill="none"
                 stroke="currentColor"
@@ -59,12 +80,12 @@ export const Items = () => {
             {filteredItems.map((item) => (
               <div>
                 <div key={item.id} className="group relative">
-                  <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
+                  <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none lg:h-80 ">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                    />
+                      className="h-full w-full object-cover object-center lg:h-full lg:w-full rounded-md border border-gray-500"
+                      />
                   </div>
                   <div className="mt-4 flex justify-between">
                     <div>
@@ -80,14 +101,14 @@ export const Items = () => {
                 </div>
                 <div className="mt-4 flex gap-2">
                   <button
-                    onClick={() => addToCart(item)}
+                    onClick={() => handleAddToCart(item)}
                     type="button"
                     className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
                     Add
                   </button>
                   <button
-                    onClick={() => removeFromCart(item)}
+                    onClick={() => handleRemoveFromCart(item)}
                     type="button"
                     className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
