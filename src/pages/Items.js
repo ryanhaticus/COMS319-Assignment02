@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { CartContext, items } from "../contexts/Cart";
 import { PageContext } from "../contexts/Page";
 import { Authors } from "../components/Authors";
@@ -6,6 +6,11 @@ import { Authors } from "../components/Authors";
 export const Items = () => {
   const { cart, addToCart, removeFromCart } = useContext(CartContext);
   const { setPage } = useContext(PageContext);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredItems = items.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
@@ -40,8 +45,18 @@ export const Items = () => {
             </button>
           </div>
 
+          <div className="mt-4">
+            <input 
+              type="text" 
+              className="w-full px-3 py-2 border rounded-md"
+              placeholder="Search for items..." 
+              value={searchTerm} 
+              onChange={(e) => setSearchTerm(e.target.value)} 
+            />
+          </div>
+
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {items.map((item) => (
+            {filteredItems.map((item) => (
               <div>
                 <div key={item.id} className="group relative">
                   <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
@@ -59,7 +74,7 @@ export const Items = () => {
                       </h3>
                     </div>
                     <p className="text-sm font-medium text-gray-900">
-                      {item.price}
+                      ${item.price}
                     </p>
                   </div>
                 </div>

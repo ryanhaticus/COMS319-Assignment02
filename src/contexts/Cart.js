@@ -46,10 +46,13 @@ export const CartProvider = ({ children }) => {
   const addToCart = (item) => {
     const newCart = [...cart, item];
 
-    const newSubtotal = newCart.reduce((acc, item) => acc + item.price, 0);
+    let newSubtotal = newCart.reduce((acc, item) => acc + item.price, 0);
+    newSubtotal = Math.round(newSubtotal * 100) / 100;  
+    const newTotal = Math.round((newSubtotal + taxes) * 100) / 100; 
+  
     setSubtotal(newSubtotal);
-    setTotal(newSubtotal + taxes);
-
+    setTotal(newTotal);
+  
     setCart(newCart);
   };
 
