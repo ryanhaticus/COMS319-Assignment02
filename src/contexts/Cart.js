@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 
-export const items = require("../cart.json");
+export const items = require("../items.json");
 
 export const CartContext = createContext({
   cart: [],
