@@ -71,7 +71,7 @@ export const Cart = () => {
                     <h3>{product.name}</h3>
                   </div>
                   <p className="flex-none text-base font-medium">
-                    {product.price}
+                    ${product.price}
                   </p>
                 </li>
               ))}
@@ -85,12 +85,12 @@ export const Cart = () => {
 
               <div className="flex items-center justify-between">
                 <dt className="text-gray-600">Taxes</dt>
-                <dd>${taxes}</dd>
+                <dd>${taxes.toFixed(2)}</dd>
               </div>
 
               <div className="flex items-center justify-between border-t border-gray-200 pt-6">
                 <dt className="text-base">Total</dt>
-                <dd className="text-base">${total}</dd>
+                <dd className="text-base">${total.toFixed(2)}</dd>
               </div>
             </dl>
 

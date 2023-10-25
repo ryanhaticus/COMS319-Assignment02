@@ -4,7 +4,7 @@ export const items = require("../items.json");
 
 export const CartContext = createContext({
   cart: [],
-  name: "",
+  custName: "",
   streetAddress: "",
   city: "",
   state: "",
@@ -12,7 +12,7 @@ export const CartContext = createContext({
   cardNumber: "",
   addToCart: (item) => {},
   removeFromCart: (item) => {},
-  setName: (name) => {},
+  setName: (custName) => {},
   setStreetAddress: (streetAddress) => {},
   setCity: (city) => {},
   setState: (state) => {},
@@ -26,7 +26,7 @@ export const CartContext = createContext({
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
-  const [name, setName] = useState("");
+  const [custName, setName] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -34,13 +34,15 @@ export const CartProvider = ({ children }) => {
   const [cardNumber, setCardNumber] = useState("");
   const [total, setTotal] = useState(0);
   const [subtotal, setSubtotal] = useState(0);
+  const [taxes, setTaxes] = useState(0);
 
-  const taxes = 3;
+  const TAX_RATE = 0.07;
 
   const clearCart = () => {
     setCart([]);
     setSubtotal(0);
     setTotal(0);
+    setTaxes(0);
   };
 
   const addToCart = (item) => {
@@ -48,11 +50,12 @@ export const CartProvider = ({ children }) => {
 
     let newSubtotal = newCart.reduce((acc, item) => acc + item.price, 0);
     newSubtotal = Math.round(newSubtotal * 100) / 100;  
-    const newTotal = Math.round((newSubtotal + taxes) * 100) / 100; 
+    const taxAmount = newSubtotal * TAX_RATE;
+    const newTotal = Math.round((newSubtotal + taxAmount) * 100) / 100;
   
     setSubtotal(newSubtotal);
     setTotal(newTotal);
-  
+    setTaxes(taxAmount);
     setCart(newCart);
   };
 
@@ -68,8 +71,10 @@ export const CartProvider = ({ children }) => {
       ];
 
       const newSubtotal = newCart.reduce((acc, item) => acc + item.price, 0);
+      const taxAmount = newSubtotal * TAX_RATE;
       setSubtotal(newSubtotal);
-      setTotal(newSubtotal + taxes);
+      setTaxes(taxAmount);
+      setTotal(newSubtotal + taxAmount);
 
       return newCart;
     });
@@ -81,7 +86,7 @@ export const CartProvider = ({ children }) => {
         cart,
         addToCart,
         removeFromCart,
-        name,
+        custName,
         setName,
         streetAddress,
         setStreetAddress,

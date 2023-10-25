@@ -50,7 +50,7 @@ export const Confirmation = () => {
                     <h3 className="text-gray-900">{product.name}</h3>
                   </div>
                   <p className="flex-none font-medium text-gray-900">
-                    {product.price}
+                    ${product.price}
                   </p>
                 </li>
               ))}
