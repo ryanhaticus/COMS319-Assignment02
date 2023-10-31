@@ -10,10 +10,12 @@ export const CartContext = createContext({
   state: "",
   zip: "",
   cardNumber: "",
+  expirationDate: "",
   addToCart: (item) => {},
   removeFromCart: (item) => {},
   setName: (custName) => {},
   setStreetAddress: (streetAddress) => {},
+  setExpirationDate: (expirationDate) => {},
   setCity: (city) => {},
   setState: (state) => {},
   setZip: (zip) => {},
@@ -28,6 +30,7 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [custName, setName] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
+  const [expirationDate, setExpirationDate] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
@@ -90,6 +93,8 @@ export const CartProvider = ({ children }) => {
         setName,
         streetAddress,
         setStreetAddress,
+        expirationDate,
+        setExpirationDate,
         city,
         setCity,
         state,

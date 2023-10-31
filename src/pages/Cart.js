@@ -1,4 +1,4 @@
-import { useContext, Fragment } from "react";
+import { useContext, Fragment, useState, useEffect } from "react";
 import { CartContext } from "../contexts/Cart";
 import { PageContext } from "../contexts/Page";
 import { Popover, Transition } from "@headlessui/react";
@@ -6,7 +6,11 @@ import { Popover, Transition } from "@headlessui/react";
 export const Cart = () => {
   const {
     cart,
+    cardNumber,
+    custName,
+    expirationDate,
     setName,
+    setExpirationDate,
     setStreetAddress,
     setCity,
     setState,
@@ -17,6 +21,43 @@ export const Cart = () => {
     taxes,
   } = useContext(CartContext);
   const { setPage } = useContext(PageContext);
+
+  const [errors, setErrors] = useState({});
+
+  const validateForm = (fieldName, value) => {
+    const newErrors = { ...errors }; // Copy the existing errors
+
+    switch(fieldName) {
+        case 'custName':
+            if (!/^[a-zA-Z]+\s[a-zA-Z]+$/.test(value)) {
+                newErrors.custName = 'Name should be in the format "First Last".';
+            } else {
+                delete newErrors.custName;
+            }
+            break;
+
+        case 'cardNumber':
+            if (!/^(\d{4}-){3}\d{4}$/.test(value)) {
+                newErrors.cardNumber = 'Card number format should be XXXX-XXXX-XXXX-XXXX.';
+            } else {
+                delete newErrors.cardNumber;
+            }
+            break;
+
+        case 'expirationDate':
+            if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(value)) {
+                newErrors.expirationDate = 'Expiration date format should be MM/YY.';
+            } else {
+                delete newErrors.expirationDate;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    setErrors(newErrors);
+};
 
   return (
     <div className="bg-white">
@@ -172,7 +213,12 @@ export const Cart = () => {
                   </label>
                   <div className="mt-1">
                     <input
-                      onChange={(e) => setName(e.target.value)}
+                      value={custName}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        validateForm('custName', e.target.value);
+                      }}
+                      onBlur={() => validateForm()} 
                       type="text"
                       id="name-on-card"
                       name="name-on-card"
@@ -181,6 +227,7 @@ export const Cart = () => {
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
+                  {errors.custName && <p className="text-red-500">{errors.custName}</p>}
                 </div>
 
                 <div className="col-span-3 sm:col-span-4">
@@ -192,15 +239,24 @@ export const Cart = () => {
                   </label>
                   <div className="mt-1">
                     <input
-                      onChange={(e) => setCardNumber(e.target.value)}
+                      value={cardNumber}
+                      onChange={(e) => {
+                        let cleaned = e.target.value.replace(/[^\d-]/g, "");
+                        let formatted = cleaned.replace(/(\d{4})(?=\d)/g, "$1-");
+                        setCardNumber(formatted);
+                        validateForm('cardNumber', formatted);
+                      }}
+                      placeholder="XXXX-XXXX-XXXX-XXXX"
+                      onBlur={() => validateForm()}  
                       type="text"
                       id="card-number"
                       name="card-number"
                       autoComplete="cc-number"
-                      maxLength="24"
+                      maxLength="19"
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
+                  {errors.cardNumber && <p className="text-red-500">{errors.cardNumber}</p>}
                 </div>
 
                 <div className="col-span-2 sm:col-span-3">
@@ -212,6 +268,16 @@ export const Cart = () => {
                   </label>
                   <div className="mt-1">
                     <input
+                      value={expirationDate}
+                      onChange={(e) => {
+                        let value = e.target.value;
+                        if (value.length === 2 && !value.includes('/')) {
+                            value += '/';
+                        }
+                        setExpirationDate(value);
+                        validateForm('expirationDate', value);
+                    }}
+                      onBlur={() => validateForm()}
                       type="text"
                       name="expiration-date"
                       id="expiration-date"
@@ -220,6 +286,7 @@ export const Cart = () => {
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
+                  {errors.expirationDate && <p className="text-red-500">{errors.expirationDate}</p>}
                 </div>
 
                 <div>
@@ -356,6 +423,12 @@ export const Cart = () => {
               <button
                 onClick={() => setPage("confirmation")}
                 type="submit"
+                disabled={
+                  Object.keys(errors).length > 0 || 
+                  !cardNumber || 
+                  !custName || 
+                  !expirationDate 
+              }
                 className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:order-last sm:w-auto"
               >
                 Complete Purchase
