@@ -121,7 +121,7 @@ export const Cart = () => {
             <dl className="hidden space-y-6 border-t border-gray-200 pt-6 text-sm font-medium text-gray-900 lg:block">
               <div className="flex items-center justify-between">
                 <dt className="text-gray-600">Subtotal</dt>
-                <dd>${subtotal}</dd>
+                <dd>${subtotal.toFixed(2)}</dd>
               </div>
 
               <div className="flex items-center justify-between">
